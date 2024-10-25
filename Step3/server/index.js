@@ -2,6 +2,7 @@
 const hapi = require('@hapi/hapi');
 const env = require('./env.js');
 const Movies = require('./respository/movie');
+const Users = require('./respository/user');
 
 const AuthBearer = require('hapi-auth-bearer-token'); //-------- AuthBearer -------
 
@@ -183,6 +184,105 @@ const init = async () => {
             try {
 
                 const responsedata = await Movies.MovieRepo.postMovie(title, genre, director, release_year);
+                if (responsedata.error) {
+                    return responsedata;
+                } else {
+                    return responsedata;
+                }
+
+            } catch (err) {
+                server.log(["error", "home"], err);
+                return err;
+            }
+
+        }
+    });
+
+    server.route({
+        method: 'POST',
+        path: '/api/user/login',
+        config: {
+            payload: {
+                multipart: true,
+            },
+            cors: {
+                origin: ['*'],
+                additionalHeaders: ['cache-control', 'x-requested-width'],
+                credentials: true
+            }
+        },
+        handler: async function (request, reply) {
+
+            const {
+                email_text,
+                password_text,
+
+            } = request.payload;
+
+            console.log("request.payload: " + JSON.stringify(request.payload));
+
+            try {
+
+                const responsedata = await Users.UserRepo.getUserSearch(email_text, password_text);
+                if (responsedata.error) {
+                    return responsedata;
+                } else {
+                    return responsedata;
+                }
+
+            } catch (err) {
+                server.log(["error", "home"], err);
+                return err;
+            }
+
+        }
+    });
+
+    server.route({
+        method: 'POST',
+        path: '/api/user/insert',
+        config: {
+            payload: {
+                multipart: true,
+            },
+            cors: {
+                origin: ['*'],
+                additionalHeaders: ['cache-control', 'x-requested-width'],
+                credentials: true
+            }
+        },
+        handler: async function (request, reply) {
+
+            const {
+                gender,
+                name_title ,
+                name_first,
+                name_last,
+                country,
+                email,
+                username,
+                password ,
+                picture_large,
+                picture_medium,
+                picture_thumbnail
+            } = request.payload;
+
+            console.log("request.payload: " + JSON.stringify(request.payload));
+
+            try {
+
+                const responsedata = await Users.UserRepo.postUser( gender,
+                                                                    name_title ,
+                                                                    name_first,
+                                                                    name_last,
+                                                                    country,
+                                                                    email,
+                                                                    username,
+                                                                    password ,
+                                                                    picture_large,
+                                                                    picture_medium,
+                                                                    picture_thumbnail);
+
                 if (responsedata.error) {
                     return responsedata;
                 } else {
